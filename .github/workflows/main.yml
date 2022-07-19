@@ -31,6 +31,7 @@ jobs:
         with:
           customImage: 'unityci/editor:2020.1.0b12-base-0'
           targetPlatform: Android
+          allowDirtyBuild: true
 
       # Output
       - uses: actions/upload-artifact@v2
