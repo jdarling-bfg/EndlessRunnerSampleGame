@@ -1,11 +1,7 @@
 pipeline {
-    stages {
-        stage('build') {
-            node('Mac') {
-                steps {
-                    sh 'xcodebuild -version'
-                }
-            }
+   node('Mac') {
+        stage('build') {      
+            sh 'xcodebuild -version'
         }
     }
 }
