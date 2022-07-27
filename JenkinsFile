@@ -1,7 +1,5 @@
-pipeline {
-   node('Mac') {
-        stage('build') {      
-            sh 'xcodebuild -version'
-        }
-    }
-}
+node('Mac') {
+     stage('build') {      
+         sh 'xcodebuild -version'
+     }
+ }
