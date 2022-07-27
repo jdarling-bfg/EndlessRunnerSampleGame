@@ -1,0 +1,10 @@
+pipeline {
+    agent { 'Mac' }
+    stages {
+        stage('build') {
+            steps {
+                sh 'xcodebuild -version'
+            }
+        }
+    }
+}
