@@ -1,26 +1,41 @@
-node('Mac') {
-    stage('build') {
-        sh 'xcodebuild -version'
+pipeline {
+    agent { label 'Mac' }
+    options {
+        timestamps()
+        ansiColor('xterm')
     }
-    stage ('Build Unity application') {
-        try {
-            sh '/Applications/Unity\\ Hub.app/Contents/MacOS/Unity\\ Hub -projectPath ${WORKSPACE}/ -buildTarget iOS -batchmode -executeMethod CLBuilder.ReceiveBuildCommand --bundleVersion=${FULL_VERSION_NUMBER} --logFile ${WORKSPACE}/unity3d_editor.log -quit ${BUILD_CONFIG}'
-        } catch (err) {
-            echo "Caught: ${err}"
-            sh '''
-                guidConflicts=$(grep -A 1 "cs' conflicts with" ${WORKSPACE}/unity3d_editor.log)
-                if [ -z "$guidConflicts" ]; then
-                    echo "No GUID conflicts found"
-                else
-                    echo "Found GUID conflicts\n$guidConflicts" 1>&2
-                fi
-            '''
-            currentBuild.result = 'FAILURE'
-            stageResult."${STAGE_NAME}" = 'FAILURE'
+    stages {
+        stage ('Clean workspace') {
+          steps {
+            cleanWs()
+          }
+        }
+        stage ('Checkout project') {
+          steps {
+            gitLFS('bfg-git', 'git@github.com:jdarling-bfg/EndlessRunnerSampleGame.git', )
+          }
+        }
+        stage ('Build Unity application') {
+            steps {
+                try {
+                    sh '/Applications/Unity\\ Hub.app/Contents/MacOS/Unity\\ Hub -projectPath ${WORKSPACE}/ -buildTarget iOS -batchmode -executeMethod CLBuilder.ReceiveBuildCommand --bundleVersion=${FULL_VERSION_NUMBER} --logFile ${WORKSPACE}/unity3d_editor.log -quit ${BUILD_CONFIG}'
+                } catch (err) {
+                    echo "Caught: ${err}"
+                    sh '''
+                        guidConflicts=$(grep -A 1 "cs' conflicts with" ${WORKSPACE}/unity3d_editor.log)
+                        if [ -z "$guidConflicts" ]; then
+                            echo "No GUID conflicts found"
+                        else
+                            echo "Found GUID conflicts\n$guidConflicts" 1>&2
+                        fi
+                    '''
+                    currentBuild.result = 'FAILURE'
+                    stageResult."${STAGE_NAME}" = 'FAILURE'
+                }
+            }
         }
     }
 }
-
 def locateUnity()
 {
     sh '''
@@ -33,4 +48,30 @@ def locateUnity()
                 echo "Expected to find unity at '${unity_default_path}'. Please ensure Unity is installed and set 'UNITY_EXECUTABLE' env var to its location."
             fi
     '''
+}
+
+def checkout_lfs(credentials, url, branch) {
+    checkout([
+      $class: 'GitSCM',
+      branches: [[name: "${branch}"]],
+      extensions: [
+        [ $class: 'GitLFSPull' ],
+        [
+          $class: 'CleanBeforeCheckout',
+          deleteUntrackedNestedRepositories: true
+        ],
+        [
+          $class: "CloneOption",
+          shallow: false,
+          timeout: 40
+        ],
+        [
+          $class: 'PruneStaleBranch'
+        ],
+      ],
+      userRemoteConfigs: [[
+        credentialsId: credentials,
+        url: url
+      ]]
+    ])
 }
