@@ -11,7 +11,9 @@ pipeline {
         }
         stage ('Checkout project') {
           steps {
-            gitLFS('bfg-git', 'git@github.com:jdarling-bfg/EndlessRunnerSampleGame.git', )
+              script {
+                  gitLFS('bfg-git', 'git@github.com:jdarling-bfg/EndlessRunnerSampleGame.git', '*/unity_build')
+              }
           }
         }
         stage ('Build Unity application') {
