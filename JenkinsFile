@@ -7,7 +7,7 @@ node('Mac') {
       steps {
         script {
           try { 
-            sh '/Applications/Unit\ Hub.app/Contents/MacOS/Unity\ Hub -projectPath ${WORKSPACE}/ -buildTarget iOS -batchmode -executeMethod CLBuilder.ReceiveBuildCommand --bundleVersion=${FULL_VERSION_NUMBER} --logFile ${WORKSPACE}/unity3d_editor.log -quit ${BUILD_CONFIG}'
+            sh '/Applications/Unity\\ Hub.app/Contents/MacOS/Unity\\ Hub -projectPath ${WORKSPACE}/ -buildTarget iOS -batchmode -executeMethod CLBuilder.ReceiveBuildCommand --bundleVersion=${FULL_VERSION_NUMBER} --logFile ${WORKSPACE}/unity3d_editor.log -quit ${BUILD_CONFIG}'
           } catch (err) {
             echo "Caught: ${err}"
             sh '''
