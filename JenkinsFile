@@ -2,7 +2,6 @@ pipeline {
     agent { label 'Mac' }
     options {
         timestamps()
-        ansiColor('xterm')
     }
     stages {
         stage ('Clean workspace') {
@@ -36,8 +35,8 @@ pipeline {
         }
     }
 }
-def locateUnity()
-{
+
+def locateUnity() {
     sh '''
         if [[ "$OSTYPE" == "darwin"* ]] && [ -z "$UNITY_EXECUTABLE" ]; then
             unity_default_path="/Applications/Unity/Hub/Editor/${unity_version}/Unity.app/Contents/MacOS/Unity"
