@@ -1,11 +1,11 @@
 node('Mac') {
     stage('build') {
-        steps {
+        step {
             sh 'xcodebuild -version'
         }
     }
     stage ('Build Unity application') {
-        steps {
+        step {
             script {
                 try {
                     sh '/Applications/Unity\\ Hub.app/Contents/MacOS/Unity\\ Hub -projectPath ${WORKSPACE}/ -buildTarget iOS -batchmode -executeMethod CLBuilder.ReceiveBuildCommand --bundleVersion=${FULL_VERSION_NUMBER} --logFile ${WORKSPACE}/unity3d_editor.log -quit ${BUILD_CONFIG}'
