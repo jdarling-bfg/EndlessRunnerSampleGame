@@ -26,7 +26,7 @@ node('Mac') {
  }
 
 def locateUnity() {
-     unity_version=$(sed -n 's/^\\m_EditorVersion: //p'< ./ProjectSettings/ProjectVersion.txt)
+     unity_version=$(sed -n 's/^m_EditorVersion: //p'< ./ProjectSettings/ProjectVersion.txt)
      echo "Found Unity version: $unity_version"
 
      if [[ "$OSTYPE" == "darwin"* ]] && [ -z "$UNITY_EXECUTABLE" ]; then
