@@ -12,6 +12,7 @@ pipeline {
         stage ('Checkout project') {
           steps {
               script {
+                  locateUnity()
                   gitLFS('bfg-git', 'git@github.com:jdarling-bfg/EndlessRunnerSampleGame.git', '*/unity_build')
               }
           }
