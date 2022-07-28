@@ -1,7 +1,9 @@
 node('Mac') {
-     stage('build') {      
-         sh 'xcodebuild -version'
-         locateUnity()
+     stage('build') {
+          steps {
+             sh 'xcodebuild -version'
+             locateUnity()
+          }
      }
      stage ('Build Unity application') {
       steps {
