@@ -3,6 +3,26 @@ node('Mac') {
          sh 'xcodebuild -version'
          locateUnity()
      }
+     stage ('Build Unity application') {
+      steps {
+        script {
+          try { 
+            sh '/Applications/Unit\ Hub.app/Contents/MacOS/Unity\ Hub -projectPath ${WORKSPACE}/ -buildTarget iOS -batchmode -executeMethod CLBuilder.ReceiveBuildCommand --bundleVersion=${FULL_VERSION_NUMBER} --logFile ${WORKSPACE}/unity3d_editor.log -quit ${BUILD_CONFIG}'
+          } catch (err) {
+            echo "Caught: ${err}"
+            sh '''
+              guidConflicts=$(grep -A 1 "cs' conflicts with" ${WORKSPACE}/unity3d_editor.log)
+              if [ -z "$guidConflicts" ]; then
+                echo "No GUID conflicts found"
+              else
+                echo "Found GUID conflicts\n$guidConflicts" 1>&2
+              fi
+            '''
+            currentBuild.result = 'FAILURE'
+            stageResult."${STAGE_NAME}" = 'FAILURE'
+          }
+        }
+      }
  }
 
 def locateUnity() {
