@@ -51,7 +51,7 @@ def locateUnity() {
     '''
 }
 
-def checkout_lfs(credentials, url, branch) {
+def gitLFS(credentials, url, branch) {
     checkout([
       $class: 'GitSCM',
       branches: [[name: "${branch}"]],
