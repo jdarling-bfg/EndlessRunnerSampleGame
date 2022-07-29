@@ -18,13 +18,13 @@ pipeline {
               }
           }
         }
-//         stage ('Sonar') {
-//             steps {
-//                 script {
-//                     shared.runSonarQube('.', 'sonar-project-key', 'AIM')
-//                 }
-//             }
-//         }
+        stage ('Sonar') {
+            steps {
+                script {
+                    common.runSonarQube('.', 'sonar-project-key', 'AIM')
+                }
+            }
+        }
         stage ('Build Unity application') {
             steps {
                 withCredentials([string(credentialsId: 'unity-token', variable: 'UNITY_SERIAL')]) {
