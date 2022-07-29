@@ -57,21 +57,23 @@ def gitLFS(credentials, url, branch) {
     checkout([
       $class: 'GitSCM',
       branches: [[name: "${branch}"]],
+      doGenerateSubmoduleConfigurations: false,
       extensions: [
-        [ $class: 'GitLFSPull' ],
-        [
-          $class: 'CleanBeforeCheckout',
-          deleteUntrackedNestedRepositories: true
-        ],
-        [
-          $class: "CloneOption",
-          shallow: false,
-          timeout: 40
-        ],
-        [
-          $class: 'PruneStaleBranch'
-        ],
+        [ $class: 'GitLFSPull' ]//,
+//         [
+//           $class: 'CleanBeforeCheckout',
+//           deleteUntrackedNestedRepositories: true
+//         ],
+//         [
+//           $class: "CloneOption",
+//           shallow: false,
+//           timeout: 40
+//         ],
+//         [
+//           $class: 'PruneStaleBranch'
+//         ],
       ],
+      submoduleCfg: [],
       userRemoteConfigs: [[
         credentialsId: credentials,
         url: url
