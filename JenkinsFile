@@ -27,7 +27,7 @@ pipeline {
 //         }
         stage ('Build Unity application') {
             steps {
-                withCredentials([usernameColonPassword(credentialsId: 'unity-token', variable: 'UNITY_SERIAL')]) {
+                withCredentials([string(credentialsId: 'unity-token', variable: 'UNITY_SERIAL')]) {
                     script {
                         try {
                             sh "/Applications/Unity\\ Hub.app/Contents/MacOS/Unity\\ Hub -quit -batchmode -serial $UNITY_SERIAL -username 'TImothy.Cope@bigfishgames.com'"
