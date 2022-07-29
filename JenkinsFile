@@ -12,7 +12,7 @@ pipeline {
         stage ('Checkout project') {
           steps {
               script {
-                  gitLFS('bfg-git', 'git@github.com:jdarling-bfg/EndlessRunnerSampleGame.git', '*/unity_build')
+                  gitLFS('bfg-git-pat', 'https://github.com/jdarling-bfg/EndlessRunnerSampleGame.git', '*/unity_build')
               }
           }
         }
