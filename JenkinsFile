@@ -71,8 +71,7 @@ pipeline {
                 ]) {
                     script {
                         try {
-//                             sh "/Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -serial $UNITY_SERIAL -username 'TImothy.Cope@bigfishgames.com' -password $UNITY_PASSWORD"
-                            sh "/Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -serial $UNITY_SERIAL -username 'TImothy.Cope@bigfishgames.com'"
+                            sh "/Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -serial $UNITY_SERIAL -username 'TImothy.Cope@bigfishgames.com' -password $UNITY_PASSWORD"
                             sh "/Applications/Unity/Unity.app/Contents/MacOS/Unity -projectPath . -buildTarget iOS -batchmode -executeMethod CLBuilder.ReceiveBuildCommand --bundleVersion=${FULL_VERSION_NUMBER} --logFile ${WORKSPACE}/unity3d_editor.log -quit ${BUILD_CONFIG} -nographics"
                         } catch (err) {
                             echo "Caught: ${err}"
