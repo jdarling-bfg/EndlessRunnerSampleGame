@@ -66,9 +66,9 @@ pipeline {
         stage ('Build Unity application') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'unity-token', variable: 'UNITY_SERIAL')/*,
+                    string(credentialsId: 'unity-token', variable: 'UNITY_SERIAL'),
                     string(credentialsId: 'unity-password', variable: 'UNITY_PASSWORD')
-                */]) {
+                ]) {
                     script {
                         try {
 //                             sh "/Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -serial $UNITY_SERIAL -username 'TImothy.Cope@bigfishgames.com' -password $UNITY_PASSWORD"
