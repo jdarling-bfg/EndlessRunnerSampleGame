@@ -5,6 +5,22 @@ pipeline {
     options {
         timestamps()
     }
+    environment {
+//         ASC_KEY = credentials('PM_ASC_KEY')
+//         ASC_KEY_ID = credentials('PM_ASC_KEY_ID')
+//         ASC_ISSUER = credentials('PM_ASC_ISSUER')
+//         UPM_CONFIG = credentials('Slotsburg_Client_UPM_Config')
+//         MATCH_KEY = credentials('match_certs_deploy_key')
+//         MATCH_PASSWORD = credentials('TEMP_MATCH_PW')
+//         APPLE_API_KEY = credentials('APPLE_API_KEY')
+//         NEXUS_REPOSITORY = 'slotsburg-client-artifacts'
+//         NEXUS_USER = credentials('NEXUS_USER_TOKEN')
+//         NEXUS_PASS = credentials('NEXUS_PASS_TOKEN')
+//         NPMRC = credentials('NEXUS_NPMRC')
+        UNITY_CONFIG_TYPE = 'Development'
+        BUILD_CONFIG = "IOS_${UNITY_CONFIG_TYPE}"
+//         ORIG_IPA_NAME = 'jackpotcoveios.ipa'
+      }
     stages {
         stage ('Clean workspace') {
           steps {
@@ -37,16 +53,7 @@ pipeline {
             /bin/echo -n ${VERSION_NUMBER};
           '''
           env.VERSION_NUMBER = ver
-
-          def fullVer = sh returnStdout:true, script: '''
-            #!/bin/bash
-            if [ "${SAFE_BRANCH_NAME}" = "main" ]; then
-              /bin/echo -n ${VERSION_NUMBER}
-            else
-              /bin/echo -n "${VERSION_NUMBER}-${SAFE_BRANCH_NAME}"
-            fi
-          '''
-          env.FULL_VERSION_NUMBER = fullVer
+          env.FULL_VERSION_NUMBER = ver
           env.FINAL_IPA = "PFC_${params.ENVIRONMENT_NAME}_${env.FULL_VERSION_NUMBER}_${params.SIGNING_TYPE}.ipa"
 
           currentBuild.displayName = "#${env.FULL_VERSION_NUMBER}"
