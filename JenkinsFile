@@ -32,7 +32,7 @@ pipeline {
           def ver = sh returnStdout:true, script: '''
             #!/bin/bash
             . "${WORKSPACE}"/version.profile
-            PATCH_VERSION=$((`git rev-list --count HEAD`-${PATCH_OFFSET}))
+            PATCH_VERSION=$(git rev-list --count HEAD)
             VERSION_NUMBER=$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION
             /bin/echo -n ${VERSION_NUMBER};
           '''
