@@ -25,6 +25,37 @@ pipeline {
 //                 }
 //             }
 //         }
+    stage('Set Version Number')
+    {
+      steps {
+        script {
+          def ver = sh returnStdout:true, script: '''
+            #!/bin/bash
+            . ${WORKSPACE}/version.profile
+            PATCH_VERSION=$((`git rev-list --count HEAD`-${PATCH_OFFSET}))
+            VERSION_NUMBER=$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION
+            /bin/echo -n ${VERSION_NUMBER};
+          '''
+          env.VERSION_NUMBER = ver
+
+          def fullVer = sh returnStdout:true, script: '''
+            #!/bin/bash
+            if [ "${SAFE_BRANCH_NAME}" = "main" ]; then
+              /bin/echo -n ${VERSION_NUMBER}
+            else
+              /bin/echo -n "${VERSION_NUMBER}-${SAFE_BRANCH_NAME}"
+            fi
+          '''
+          env.FULL_VERSION_NUMBER = fullVer
+          env.FINAL_IPA = "PFC_${params.ENVIRONMENT_NAME}_${env.FULL_VERSION_NUMBER}_${params.SIGNING_TYPE}.ipa"
+
+          currentBuild.displayName = "#${env.FULL_VERSION_NUMBER}"
+
+          echo "VERSION_NUMBER: ${env.VERSION_NUMBER}"
+          echo "FULL_VERSION_NUMBER: ${env.FULL_VERSION_NUMBER}"
+        }
+      }
+    }
         stage ('Build Unity application') {
             steps {
                 withCredentials([string(credentialsId: 'unity-token', variable: 'UNITY_SERIAL')]) {
