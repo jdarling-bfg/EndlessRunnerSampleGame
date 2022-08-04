@@ -28,11 +28,11 @@ pipeline {
           }
         }
         stage ('Checkout project') {
-          steps {
-              script {
-                  gitLFS('bfg-git-pat', 'https://github.com/jdarling-bfg/EndlessRunnerSampleGame.git', '*/unity_build')
-              }
-          }
+            steps {
+                script {
+                    gitLFS('bfg-git-pat', 'https://github.com/jdarling-bfg/EndlessRunnerSampleGame.git', '*/unity_build')
+                }
+            }
         }
 //         stage ('Sonar (Disabled)') {
 //             steps {
@@ -43,33 +43,36 @@ pipeline {
 //         }
     stage('Set Version Number')
     {
-      steps {
-        script {
-          def ver = sh returnStdout:true, script: '''
-            #!/bin/bash
-            . "${WORKSPACE}"/version.profile
-            PATCH_VERSION=$(git rev-list --count HEAD)
-            VERSION_NUMBER=$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION
-            /bin/echo -n ${VERSION_NUMBER};
-          '''
-          env.VERSION_NUMBER = ver
-          env.FULL_VERSION_NUMBER = ver
-          env.FINAL_IPA = "PFC_${params.ENVIRONMENT_NAME}_${env.FULL_VERSION_NUMBER}_${params.SIGNING_TYPE}.ipa"
+        steps {
+            script {
+                def ver = sh returnStdout:true, script: '''
+                    #!/bin/bash
+                    . "${WORKSPACE}"/version.profile
+                    PATCH_VERSION=$(git rev-list --count HEAD)
+                    VERSION_NUMBER=$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION
+                    /bin/echo -n ${VERSION_NUMBER};
+                '''
+                env.VERSION_NUMBER = ver
+                env.FULL_VERSION_NUMBER = ver
+                env.FINAL_IPA = "PFC_${params.ENVIRONMENT_NAME}_${env.FULL_VERSION_NUMBER}_${params.SIGNING_TYPE}.ipa"
 
-          currentBuild.displayName = "#${env.FULL_VERSION_NUMBER}"
+                currentBuild.displayName = "#${env.FULL_VERSION_NUMBER}"
 
-          echo "VERSION_NUMBER: ${env.VERSION_NUMBER}"
-          echo "FULL_VERSION_NUMBER: ${env.FULL_VERSION_NUMBER}"
+                echo "VERSION_NUMBER: ${env.VERSION_NUMBER}"
+                echo "FULL_VERSION_NUMBER: ${env.FULL_VERSION_NUMBER}"
+            }
         }
-      }
     }
         stage ('Build Unity application') {
             steps {
-                withCredentials([string(credentialsId: 'unity-token', variable: 'UNITY_SERIAL')]) {
+                withCredentials([
+                    string(credentialsId: 'unity-token', variable: 'UNITY_SERIAL')/*,
+                    string(credentialsId: 'unity-password', variable: 'UNITY_PASSWORD')
+                */]) {
                     script {
                         try {
-//                             sh "/Applications/Unity\\ Hub.app/Contents/MacOS/Unity\\ Hub -quit -batchmode -serial $UNITY_SERIAL -username 'TImothy.Cope@bigfishgames.com' -nographics"
-//                             sh "/Applications/Unity\\ Hub.app/Contents/MacOS/Unity\\ Hub -projectPath ${WORKSPACE}/ -buildTarget iOS -batchmode -executeMethod CLBuilder.ReceiveBuildCommand --bundleVersion=${FULL_VERSION_NUMBER} --logFile ${WORKSPACE}/unity3d_editor.log -quit ${BUILD_CONFIG} -nographics"
+//                             sh "/Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -serial $UNITY_SERIAL -username 'TImothy.Cope@bigfishgames.com' -password $UNITY_PASSWORD"
+                            sh "/Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -serial $UNITY_SERIAL -username 'TImothy.Cope@bigfishgames.com'"
                             sh "/Applications/Unity/Unity.app/Contents/MacOS/Unity -projectPath . -buildTarget iOS -batchmode -executeMethod CLBuilder.ReceiveBuildCommand --bundleVersion=${FULL_VERSION_NUMBER} --logFile ${WORKSPACE}/unity3d_editor.log -quit ${BUILD_CONFIG} -nographics"
                         } catch (err) {
                             echo "Caught: ${err}"
