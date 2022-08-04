@@ -6,20 +6,8 @@ pipeline {
         timestamps()
     }
     environment {
-//         ASC_KEY = credentials('PM_ASC_KEY')
-//         ASC_KEY_ID = credentials('PM_ASC_KEY_ID')
-//         ASC_ISSUER = credentials('PM_ASC_ISSUER')
-//         UPM_CONFIG = credentials('Slotsburg_Client_UPM_Config')
-//         MATCH_KEY = credentials('match_certs_deploy_key')
-//         MATCH_PASSWORD = credentials('TEMP_MATCH_PW')
-//         APPLE_API_KEY = credentials('APPLE_API_KEY')
-//         NEXUS_REPOSITORY = 'slotsburg-client-artifacts'
-//         NEXUS_USER = credentials('NEXUS_USER_TOKEN')
-//         NEXUS_PASS = credentials('NEXUS_PASS_TOKEN')
-//         NPMRC = credentials('NEXUS_NPMRC')
         UNITY_CONFIG_TYPE = 'Development'
         BUILD_CONFIG = "IOS_${UNITY_CONFIG_TYPE}"
-//         ORIG_IPA_NAME = 'jackpotcoveios.ipa'
       }
     stages {
         stage ('Clean workspace') {
