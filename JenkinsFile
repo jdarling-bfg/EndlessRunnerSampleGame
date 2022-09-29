@@ -22,13 +22,13 @@ pipeline {
                 }
             }
         }
-//         stage ('Sonar (Disabled)') {
-//             steps {
-//                 script {
-//                     common.runSonarQube('.', 'sonar-project-key', 'AIM')
-//                 }
-//             }
-//         }
+        stage ('Sonar') {
+            steps {
+                script {
+                    common.runSonarQube('.', 'sonar-project-key', 'AIM')
+                }
+            }
+        }
     stage('Set Version Number')
     {
         steps {
@@ -44,7 +44,7 @@ pipeline {
                 env.FULL_VERSION_NUMBER = ver
                 env.FINAL_IPA = "PFC_${params.ENVIRONMENT_NAME}_${env.FULL_VERSION_NUMBER}_${params.SIGNING_TYPE}.ipa"
 
-                currentBuild.displayName = "#${env.FULL_VERSION_NUMBER}"
+                currentBuild.displayName = "#${BUILD_NUMBER}-${env.FULL_VERSION_NUMBER}"
 
                 echo "VERSION_NUMBER: ${env.VERSION_NUMBER}"
                 echo "FULL_VERSION_NUMBER: ${env.FULL_VERSION_NUMBER}"
@@ -60,21 +60,13 @@ pipeline {
                     script {
                         try {
                             timeout(time: 10, unit: 'MINUTES') {
-                                sh "/Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -serial $UNITY_SERIAL -username 'Timothy.Cope@bigfishgames.com' -password $UNITY_PASSWORD"
-                                sh "/Applications/Unity/Unity.app/Contents/MacOS/Unity -projectPath . -buildTarget iOS -batchmode -executeMethod CLBuilder.ReceiveBuildCommand --bundleVersion=${FULL_VERSION_NUMBER} --logFile ${WORKSPACE}/unity3d_editor.log -quit ${BUILD_CONFIG} -nographics"
+                                sh "/Applications/Unity/Hub/Editor/2020.3.40f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -nographics"
+                                // sh "/Applications/Unity/Hub/Editor/2020.3.40f1/Unity.app/Contents/MacOS/Unity -quit -stackTraceLogType -batchmode -projectPath . -buildTarget iOS -batchmode -executeMethod BundleAndBuild.BuildCommand --bundleVersion=${FULL_VERSION_NUMBER} --logFile ${WORKSPACE}/unity3d_editor.log -quit ${BUILD_CONFIG} -nographics"
+                                // sh "/Applications/Unity/Hub/Editor/2020.3.40f1/Unity.app/Contents/MacOS/Unity -quit -stackTraceLogType -batchmode -projectPath . -buildTarget iOS -batchmode -executeMethod CLBuilder.ReceiveBuildCommand --bundleVersion=${FULL_VERSION_NUMBER} --logFile ${WORKSPACE}/unity3d_editor.log -quit ${BUILD_CONFIG} -nographics"
                             }
                         } catch (err) {
                             echo "Caught: ${err}"
-                            sh '''
-                                guidConflicts=$(grep -A 1 "cs' conflicts with" ${WORKSPACE}/unity3d_editor.log)
-                                if [ -z "$guidConflicts" ]; then
-                                    echo "No GUID conflicts found"
-                                else
-                                    echo "Found GUID conflicts\n$guidConflicts" 1>&2
-                                fi
-                            '''
-                            currentBuild.result = 'FAILURE'
-                            stageResult."${STAGE_NAME}" = 'FAILURE'
+                            throw err
                         }
                     }
                 }
